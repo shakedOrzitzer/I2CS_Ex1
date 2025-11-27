@@ -1,5 +1,8 @@
 package Ex1;
 
+import static java.lang.Double.parseDouble;
+import static java.lang.Integer.parseInt;
+
 /**
  * Introduction to Computer Science 2026, Ariel University,
  * Ex1: arrays, static functions and JUnit
@@ -72,13 +75,17 @@ public class Ex1 {
 	 * where n is the max degree (over p1, p2) - up to an epsilon (aka EPS) value.
 	 * @param p1 first polynomial function
 	 * @param p2 second polynomial function
-	 * @return true iff p1 represents the same polynomial function as p2.
+	 * @return true if p1 represents the same polynomial function as p2.
 	 */
 	public static boolean equals(double[] p1, double[] p2) {
 		boolean ans = true;
-        /** add you code below
-
-         /////////////////// */
+        int bigPow =0;
+        if(p1.length>=p2.length) {
+            bigPow=p1.length;}
+        else {bigPow=p2.length;}
+        for(int i=0;i<=bigPow;i++) {
+            if(Math.abs((f(p1,i)-f(p2,i))) > EPS) {return false;}
+        }
 		return ans;
 	}
 
@@ -87,15 +94,30 @@ public class Ex1 {
 	 * For example the array {2,0,3.1,-1.2} will be presented as the following String  "-1.2x^3 +3.1x^2 +2.0"
 	 * @param poly the polynomial function represented as an array of doubles
 	 * @return String representing the polynomial function:
+     *
+     * int len=poly.length
+     * for(int i=len;i>=0;i-=1){
+     *      ans+= string(poly[i])+"X^"+string(i)
+     * }
 	 */
 	public static String poly(double[] poly) {
 		String ans = "";
 		if(poly.length==0) {ans="0";}
 		else {
-            /** add you code below
-
-             /////////////////// */
-		}
+            poly=compact(poly);
+            int len=poly.length;
+            for(int i=len-1;i>=0;i-=1){
+                if (i==0) {
+                    ans += (poly[i]);}
+                else{
+                        if (poly[i] == 0) {
+                        }
+                        else {
+                            ans += (poly[i]) + "x^" + (i) + " +";
+                        }
+                    }
+                }
+            }
 		return ans;
 	}
 	/**
@@ -127,11 +149,19 @@ public class Ex1 {
 	 * @param numberOfSegments - (A positive integer value (1,2,...).
 	 * @return the length approximation of the function between f(x1) and f(x2).
 	 */
-	public static double length(double[] p, double x1, double x2, int numberOfSegments) {
-		double ans = x1;
-        /** add you code below
-
-         /////////////////// */
+	public static double length(double[] poly, double x1, double x2, int numberOfSegments) {
+		double ans = 0;
+        double p= (x2-x1) / (numberOfSegments+1);
+        double x3=0,x4=0, f3=0,f4=0,lenX=0,lenY=0;
+        for (double i=x1;i<=x2-p;i+=p) {
+            x3=i;
+            x4=i+p;
+            f3=f(poly,x3);
+            f4=f(poly,x4);
+            lenX=Math.pow((x4-x3),2);
+            lenY=Math.pow((f4-f3),2);
+            ans+=Math.sqrt(lenX+lenY);
+        }
 		return ans;
 	}
 	
@@ -162,44 +192,84 @@ public class Ex1 {
 	 * @return
 	 */
 	public static double[] getPolynomFromString(String p) {
-		double [] ans = ZERO;//  -1.0x^2 +3.0x +2.0
-        /** add you code below
-
-         /////////////////// */
+		double [] ans = ZERO;//  -1.0x^2 +3.0x +2.0, "-1.2x^3 +3.1x^2 +2.0"
+        //p.replaceAll("\\s+", "");
+        String[] p2= p.split(" ");
+        double[] poly = new double[p2.length];
+        for (int i=poly.length-1;i>=0;i-=1) {
+            if(getBFromMonom(p2[i])==i){
+                poly[i]=getAFromMonom(p2[i]);
+            }
+        }
 		return ans;
 	}
 	/**
 	 * This function computes the polynomial function which is the sum of two polynomial functions (p1,p2)
+     * if l2>l1
+     *      replace l1,l2
+     * for (int i=0;i<l2;i++){
+     *      p1[i]+=p2[i]
+     * }
      *
-	 * @param p1
-	 * @param p2
-	 * @return
+	 * @param p1 longer
+	 * @param p2 shorter
+	 * @return p2
 	 */
 	public static double[] add(double[] p1, double[] p2) {
 		double [] ans = ZERO;//
-        /** add you code below
-
-         /////////////////// */
+        if (p1==null)
+            return p2;
+        if (p2==null)
+            return p1;
+        p1=compact(p1);
+        p2=compact(p2);
+        int l1=p1.length;
+        int l2=p2.length;
+        if (l2>l1){
+            double[] longer = p2;
+            double[] shorter = p1;
+        }
+        double[] longer = p1;
+        double[] shorter = p2;
+        l1=longer.length;
+        l2=shorter.length;
+        for (int i = 0; i <l2 ; i++) {
+            longer[i] += shorter[i];
+        }
+        ans = longer;
 		return ans;
 	}
 	/**
 	 * This function computes the polynomial function which is the multiplication of two polynoms (p1,p2)
+     * p1,p2 compact
+     * double[] res= new double[]
+     * for (int i=0;i<p1.len;i++){
+     *      double[] c= mul(p2,p1[i],i]
+     *      and=add (ans,c)
+     *
+     *     }
+     * }
 	 * @param p1
 	 * @param p2
 	 * @return
 	 */
 	public static double[] mul(double[] p1, double[] p2) {
 		double [] ans = ZERO;//
-        /** add you code below
+        compact(p1);
+        compact(p2);
+        double[] res= new double[p1.length+p2.length];
+        for (int i=0;i<p1.length-1;i++){
+            double[] c= mul(p2,p1[i],i);
+            res=add (res,c);}
+        compact(res);
+		return res;
 
-         /////////////////// */
-		return ans;
-	}
+    }
 	/**
 	 * This function computes the derivative of the p0 polynomial function.
      * input (poly)
      * output ans= ZERO
-     * if ( poly != null && poly.length)
+     * if ( poly != null && poly.length>1)
      * int len = poly.length
      * ans= new double [len-1]
      * for(int i=0;i<ans.length
@@ -217,4 +287,93 @@ public class Ex1 {
         }
 		return ans;
 	}
+    /**
+     * פונקציית עזר לmul
+     * function gets poly, m= (a*x**b)
+     * returns poly*m
+     * poly= {1,2,3} m=2*x^3
+     *
+     * mul (poly,a,b)
+     * res= new double[poly.len+b]
+     * for(int i=0;i<res.len;i++)
+     *      res[i]=0
+     * for(int i=b;b<res.len;i++)
+     *      res[i]=a*poly[i]
+     * @param poly
+     * @param b
+     * @return
+     */
+    public static double[] mul(double[] poly,double a, int b) {
+        double[] res1 = new double[poly.length+b];
+        for(int i = b; b< res1.length; i+=1)
+            res1[i]=a*poly[i-b];
+        res1 =compact(res1);
+        return res1;
+    }
+    /**
+     *this function gets a polynome, and returns polynome with no 0's in the biggest pow
+     * for {1,2,4,3,0,4,0,0}
+     * returns {1,2,4,3,0,4}
+     *
+     * run on poly and find biggest index for which poly[i] !=0
+     * double[] res=new double[found index]
+     * for (int i=0;i<res.length;i++)
+     *      res[i]=poly[i]
+     * return res
+     * @param p1
+     * @return
+     */
+    public static double[] compact(double[] p1) {
+        int max=0;
+        for (int i=0;i<p1.length;i++) {
+            if (p1[i]!=0) {max=i;}
+        }
+        double[] res=new double[max+1];
+        for (int i=0;i<res.length;i++) {res[i]=p1[i];}
+        return res;
+    }
+    /**
+     * function checks if input in a number
+     */
+    public static int stringToNumber (String s) {
+        int ans= -1;
+        try{
+            String[] n= s.split("\\.");
+            parseInt(n[0]);
+            return parseInt(n[0]);}
+        catch (NumberFormatException e) {
+            return -1;
+        }
+    }
+
+    /**
+     * function gets a monom a*x^b and returns a
+     * @param monom
+     * @return
+     */
+    public static double getAFromMonom (String monom) {
+        double ans= -1;
+        if (stringToNumber(monom)>=0) return stringToNumber(monom);
+        String[] n= monom.split("x");
+        if(stringToNumber(n[0])>=0)
+            return stringToNumber(n[0]);
+        return ans;
+        }
+
+    /**
+     * this function gets a monom a*x^b and returns b
+     */
+    public static int getBFromMonom (String monom) {
+        monom= monom.substring(1);
+        int b= stringToNumber(monom);
+        if (b>=0) return 0;
+        else { // monom ax^b
+            String[]n=monom.split("\\^");
+                if(stringToNumber(n[1])!=-1){return stringToNumber(n[1]);}
+
+        }
+
+        return b;
+    }
+
 }

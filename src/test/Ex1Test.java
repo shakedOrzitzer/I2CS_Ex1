@@ -1,4 +1,5 @@
-package Ex1;
+package test;
+import Ex1.Ex1;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +25,7 @@ class Ex1Test {
 	/**
 	 * Tests that f(x) == poly(x).
 	 */
-	void testF() {
+	 void testF() {
 		double fx0 = Ex1.f(po1, 0);
 		double fx1 = Ex1.f(po1, 1);
 		double fx2 = Ex1.f(po1, 2);
@@ -44,6 +45,16 @@ class Ex1Test {
 		double f12x = Ex1.f(po12, x);
 		assertEquals(f1x + f2x, f12x, Ex1.EPS);
 	}
+    @Test
+    /**
+     * tests f() on polynom y=number
+     */
+    public void testF3() {
+        double[] x={5};
+        double expected=5;
+        assertEquals(expected,Ex1.f(x, 3));
+    }
+
 	@Test
 	/**
 	 * Tests that p1+p2+ (-1*p2) == p1
@@ -55,6 +66,16 @@ class Ex1Test {
 		double[] p1 = Ex1.add(p12, pp2);
 		assertTrue(Ex1.equals(p1, po1));
 	}
+    //tests if p1+p2 is p1+p2
+    @Test
+    void testAdd1() {
+        double[] p1= new double[] {1,2,3};
+        double[] p2= new double[] {4,5,0,0};
+        double[] res=Ex1.add(p1, p2);
+        double[] exp= new double[] {5,7,3};
+        assertArrayEquals(res,exp);
+    }
+
 	@Test
 	/**
 	 * Tests that p1+p2 == p2+p1
@@ -72,7 +93,26 @@ class Ex1Test {
 		double[] p1 = Ex1.add(po1, Ex1.ZERO);
 		assertTrue(Ex1.equals(p1, po1));
 	}
-	@Test
+    /**
+     * tests poly from arr to string
+     */
+    @Test
+    void testPoly() {
+        double[] p1= {2,0,3.1,-1.2};
+        String expected= "-1.2x^3 +3.1x^2 +2.0";
+        assertEquals(expected,Ex1.poly(p1));
+    }
+    /**
+     * test function compact- private func
+     */
+    @Test
+    void testCompact() {
+        double[] p1= new double[] {1,2,4,3,4,0,0};
+        double[] p2= new double[] {1,2,4,3,4};
+        double[] res=Ex1.compact(p1);
+        assertArrayEquals(p2,res);
+    }
+    @Test
 	/**
 	 * Tests that p1*0 == 0
 	 */
@@ -135,6 +175,13 @@ class Ex1Test {
 		if(!isSame2) {fail();}
 		assertEquals(sp, Ex1.poly(p1));
 	}
+
+    @Test
+    void testPolynomFromString(){
+        String s= "-1.2x^3 +3.1x^2 +2.0";
+        double[] expected= {2,0,3.1,-1.2};
+        assertEquals(s,Ex1.getPolynomFromString(s));
+    }
 	@Test
 	/**
 	 * Tests the equality of pairs of arrays.
@@ -150,7 +197,13 @@ class Ex1Test {
 			assertFalse(Ex1.equals(d1[i], xx[i]));
 		}
 	}
+    @Test
+    /**
+     * tests if polynom1==polynom2 up to EPS
+     */
+    public void testEquals2() {
 
+    }
 	@Test
 	/**
 	 * Tests is the sameValue function is symmetric.
@@ -210,4 +263,38 @@ class Ex1Test {
 
     }
 
+    @Test
+    /**
+     * tests if a string is a number
+     */
+    public void testStringToNumber() {
+        String s="0";
+        int expected=0;
+        assertEquals(expected,Ex1.stringToNumber(s));
+    }
+    @Test
+    public void testGetAFromMonom1() {
+        String s="5x^2";
+        int expected=5;
+        assertEquals(expected,Ex1.getAFromMonom(s));
+    }
+
+    @Test
+    public void testGetBFromMonom() {
+        String s="5x^2";
+        int expected=2;
+        assertEquals(expected,Ex1.getBFromMonom(s));
+    }
+    @Test
+    /**
+     * tests the function length
+     */
+    public void testLength() {
+        double[]p={8,5};
+        double x1= 2;
+        double x2= 8;
+        int n =2;
+        double expected = 30.594;
+        assertEquals(expected,Ex1.length(p,x1,x2,n),Ex1.EPS);
+    }
 }
