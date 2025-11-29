@@ -199,6 +199,26 @@ class Ex1Test {
 	}
     @Test
     /**
+     *
+     */
+    public void testRootRec(){
+        double [] p1={4,2};
+        //double [] p2={6};
+        assertEquals(-2, (Ex1.root_rec(p1,-5,7,Ex1.EPS)));
+    }
+
+    @Test
+    /**
+     * test diff- the differenceof 2 polynomes
+     */
+    public void testDiff(){
+        double [] p1={4,2};
+        double [] p2={-2,4};
+        double [] expected={6,-2};
+        assertArrayEquals(expected, Ex1.diff(p1,p2));
+    }
+    @Test
+    /**
      * tests if polynom1==polynom2 up to EPS
      */
     public void testEquals2() {

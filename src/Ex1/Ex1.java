@@ -128,14 +128,13 @@ public class Ex1 {
 	 * @param x1 - minimal value of the range
 	 * @param x2 - maximal value of the range
 	 * @param eps - epsilon (positive small value (often 10^-3, or 10^-6).
+     * @param differ - the difference of p1 and p2
 	 * @return an x value (x1<=x<=x2) for which |p1(x) - p2(x)| < eps.
 	 */
 	public static double sameValue(double[] p1, double[] p2, double x1, double x2, double eps) {
-		double ans = x1;
-        /** add you code below
-
-         /////////////////// */
-		return ans;
+		double ans = -1;
+        double[] differ= diff(p1,p2);
+		return root_rec(differ,x1,x2,eps);
 	}
 	/**
 	 * Given a polynomial function (p), a range [x1,x2] and an integer with the number (n) of sample points.
@@ -143,7 +142,7 @@ public class Ex1 {
 	 * using n inner sample points and computing the segment-path between them.
 	 * assuming x1 < x2. 
 	 * This function should be implemented iteratively (none recursive).
-	 * @param p - the polynomial function
+	 * @param poly - the polynomial function
 	 * @param x1 - minimal value of the range
 	 * @param x2 - maximal value of the range
 	 * @param numberOfSegments - (A positive integer value (1,2,...).
@@ -376,4 +375,28 @@ public class Ex1 {
         return b;
     }
 
+    /**
+     * this function computes the difference of 2 polynomes
+     */
+    public static double[] diff(double[] p1, double[] p2) {
+        if (p1==null)
+            return p2;
+        if (p2==null)
+            return p1;
+        p1=compact(p1);
+        p2=compact(p2);
+        int l1=p1.length;
+        int l2=p2.length;
+        if (l2>l1){
+            double[] longer = p2;
+            double[] shorter = p1;
+        }
+        double[] longer = p1;
+        double[] shorter = p2;
+        l2=shorter.length;
+        for (int i = 0; i <l2 ; i++) {
+            longer[i] -= shorter[i];
+        }
+        return longer;
+    }
 }
