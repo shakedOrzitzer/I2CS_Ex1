@@ -1,5 +1,6 @@
 package Ex1;
 
+import static java.lang.Double.NaN;
 import static java.lang.Double.parseDouble;
 import static java.lang.Integer.parseInt;
 
@@ -20,6 +21,7 @@ public class Ex1 {
 	public static final double EPS = 0.001; // the epsilon to be used for the root approximation.
 	/** The zero polynomial function is represented as an array with a single (0) entry. */
 	public static final double[] ZERO = {0};
+	public static final double[] MINUS_ONE = {-1};
 	/**
 	 * Computes the f(x) value of the polynomial function at x.
 	 * @param poly - polynomial function
@@ -44,14 +46,14 @@ public class Ex1 {
 	 * @param eps - epsilon (positive small value (often 10^-3, or 10^-6).
 	 * @return an x value (x1<=x<=x2) for which |p(x)| < eps.
 	 */
-	public static double root_rec(double[] p, double x1, double x2, double eps) {
-		double f1 = f(p,x1);
-		double x12 = (x1+x2)/2;
-		double f12 = f(p,x12);
-		if (Math.abs(f12)<eps) {return x12;}
-		if(f12*f1<=0) {return root_rec(p, x1, x12, eps);}
-		else {return root_rec(p, x12, x2, eps);}
-	}
+    public static double root_rec(double[] p, double x1, double x2, double eps) {
+        double f1 = f(p,x1);
+        double x12 = (x1+x2)/2;
+        double f12 = f(p,x12);
+        if (Math.abs(f12)<eps) {return x12;}
+        if(f12*f1<=0) {return root_rec(p, x1, x12, eps);}
+        else {return root_rec(p, x12, x2, eps);}
+    }
 	/**
 	 * This function computes a polynomial representation from a set of 2D points on the polynom.
 	 * The solution is based on: //	http://stackoverflow.com/questions/717762/how-to-calculate-the-vertex-of-a-parabola-given-three-points
@@ -107,13 +109,25 @@ public class Ex1 {
             poly=compact(poly);
             int len=poly.length;
             for(int i=len-1;i>=0;i-=1){
-                if (i==0) {
-                    ans += (poly[i]);}
+                if (i==len-1) {
+                    ans += (poly[i]);
+                }
                 else{
                         if (poly[i] == 0) {
                         }
                         else {
-                            ans += (poly[i]) + "x^" + (i) + " +";
+                            if (i==0){
+                                if(poly[i]<0) {ans += " " + (poly[i]);}
+                                if(poly[i]>0) {ans += " +" + (poly[i]);}
+                            }
+                            else {
+                                if (poly[i] < 0) {
+                                    ans += " " + (poly[i]) + "x^" + (i);
+                                }
+                                if (poly[i] > 0) {
+                                    ans += " +" + (poly[i]) + "x^" + (i);
+                                }
+                            }
                         }
                     }
                 }
@@ -128,14 +142,23 @@ public class Ex1 {
 	 * @param x1 - minimal value of the range
 	 * @param x2 - maximal value of the range
 	 * @param eps - epsilon (positive small value (often 10^-3, or 10^-6).
-     * @param differ - the difference of p1 and p2
 	 * @return an x value (x1<=x<=x2) for which |p1(x) - p2(x)| < eps.
 	 */
 	public static double sameValue(double[] p1, double[] p2, double x1, double x2, double eps) {
 		double ans = -1;
-        double[] differ= diff(p1,p2);
-		return root_rec(differ,x1,x2,eps);
+        for(double i=x1;i<=x2;i+=EPS) {
+            if(Math.abs((f(p1,i)-f(p2,i))) <= EPS) {return i;}
+        }
+		return x1;
 	}
+    public static double sameValue00(double[] p1, double[] p2, double x1, double x2, double eps) {
+        // p(x) = p1(x) − p2(x)
+        double[] minusP2 = mul(p2, new double[]{-1});
+        double[] diff = add(p1, minusP2);
+
+        // now find root of diff(x)
+        return -1;
+    }
 	/**
 	 * Given a polynomial function (p), a range [x1,x2] and an integer with the number (n) of sample points.
 	 * This function computes an approximation of the length of the function between f(x1) and f(x2) 
@@ -238,7 +261,7 @@ public class Ex1 {
                 poly[i]=getAFromMonom(p2[i]);
             }
         }
-		return ans;
+		return poly;
 	}
 	/**
 	 * This function computes the polynomial function which is the sum of two polynomial functions (p1,p2)
@@ -262,19 +285,25 @@ public class Ex1 {
         p2=compact(p2);
         int l1=p1.length;
         int l2=p2.length;
-        if (l2>l1){
-            double[] longer = p2;
-            double[] shorter = p1;
+        int maxl=Math.max(l1,l2);
+        int minl=Math.min(l1,l2);
+        double [] res=new double[maxl];
+        for(int i=0;i<minl;i++){
+            res[i]=p1[i]+p2[i];
         }
-        double[] longer = p1;
-        double[] shorter = p2;
-        l1=longer.length;
-        l2=shorter.length;
-        for (int i = 0; i <l2 ; i++) {
-            longer[i] += shorter[i];
+
+        if (p2.length>p1.length){
+            for(int i=minl;i<maxl;i++){
+                res[i]=p2[i];
+            }
         }
-        ans = longer;
-		return ans;
+        else{
+            if(p1.length>p2.length){
+            for(int i=minl;i<maxl;i++){
+                res[i]=p1[i];}
+            }
+        }
+		return compact(res);
 	}
 	/**
 	 * This function computes the polynomial function which is the multiplication of two polynoms (p1,p2)
@@ -296,7 +325,7 @@ public class Ex1 {
         compact(p2);
         double[] res= new double[p1.length+p2.length];
         for (int i=0;i<p1.length-1;i++){
-            double[] c= mul(p2,p1[i],i);
+            double[] c= mul1(p2,p1[i],i);
             res=add (res,c);}
         compact(res);
 		return res;
@@ -315,7 +344,7 @@ public class Ex1 {
 	 * @return
 	 */
 	public static double[] derivative (double[] po) {
-		double [] ans = ZERO;//
+		double [] ans = ZERO;
         if ( po!= null && po.length>1) {
             int len = po.length;
             ans= new double [len-1] ;
@@ -340,9 +369,9 @@ public class Ex1 {
      * @param b
      * @return
      */
-    public static double[] mul(double[] poly,double a, int b) {
+    public static double[] mul1(double[] poly,double a, int b) {
         double[] res1 = new double[poly.length+b];
-        for(int i = b; b< res1.length; i+=1)
+        for(int i = b; i< res1.length; i+=1)
             res1[i]=a*poly[i-b];
         res1 =compact(res1);
         return res1;
@@ -425,16 +454,25 @@ public class Ex1 {
         p2=compact(p2);
         int l1=p1.length;
         int l2=p2.length;
+        double[]ans;
         if (l2>l1){
-            double[] longer = p2;
-            double[] shorter = p1;
+            ans=new double[l2];
+            for (int i = 0; i <l1 ; i++) {
+                ans[i] = p1[i]-p2[i];
+            }
+            for (int i = l1; i < l2 ; i++) {
+                ans[i]=p2[i];
+            }
         }
-        double[] longer = p1;
-        double[] shorter = p2;
-        l2=shorter.length;
-        for (int i = 0; i <l2 ; i++) {
-            longer[i] -= shorter[i];
+        else {
+            ans=new double[l1];
+            for (int i = 0; i <l2 ; i++) {
+                ans[i] = p1[i]-p2[i];
+            }
+            for (int i = l2; i < l1 ; i++) {
+                ans[i]=p1[i];
+            }
         }
-        return longer;
+        return ans;
     }
 }

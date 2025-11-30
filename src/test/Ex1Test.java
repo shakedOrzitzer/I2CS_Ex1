@@ -223,18 +223,27 @@ class Ex1Test {
      * tests if polynom1==polynom2 up to EPS
      */
     public void testEquals2() {
-
+        double[] p1={4};
+        double[] p2={5};
+        boolean expected=Ex1.equals(p1, p2);
+        assertEquals(false,expected);
     }
 	@Test
 	/**
 	 * Tests is the sameValue function is symmetric.
 	 */
-	public void testSameValue2() {
+	public void testSameValue() {
 		double x1=-4, x2=0;
 		double rs1 = Ex1.sameValue(po1,po2, x1, x2, Ex1.EPS);
 		double rs2 = Ex1.sameValue(po2,po1, x1, x2, Ex1.EPS);
 		assertEquals(rs1,rs2, Ex1.EPS);
 	}
+
+    @Test
+    public void testSameValue2() {
+
+    }
+
 	@Test
 	/**
 	 * Test the area function - it should be symmetric.
@@ -282,6 +291,14 @@ class Ex1Test {
         double [] p = {1,2,3};
         double [] d = Ex1.derivative(p);
 
+    }
+
+    @Test
+    public void testDerivative2() {
+        double[] po4 = {2,1,-0.7, -0.02,0.02};
+        double[] expected = {1,-1.4,-0.06,0.08};
+        double[] res = Ex1.derivative(po4);
+        assertArrayEquals(expected,res, Ex1.EPS);
     }
 
     @Test
