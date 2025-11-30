@@ -266,13 +266,13 @@ class Ex1Test {
 		double x2 = 2;
 		double a1 = Ex1.area(po_a,po_b, x1, x2, 1);
 		double a2 = Ex1.area(po_a,po_b, x1, x2, 2);
-		//double a3 = Ex1.area(po_a,po_b, x1, x2, 3);
-		//double a100 = Ex1.area(po_a,po_b, x1, x2, 100);
+		double a3 = Ex1.area(po_a,po_b, x1, x2, 3);
+		double a100 = Ex1.area(po_a,po_b, x1, x2, 100);
 		double area =4;
 		assertEquals(a1,area, Ex1.EPS);
-		//assertEquals(a2,area, Ex1.EPS);
-		//assertEquals(a3,area, Ex1.EPS);
-        //assertEquals(a100,area, Ex1.EPS);
+		assertEquals(a2,area, Ex1.EPS);
+		assertEquals(a3,area, Ex1.EPS);
+        assertEquals(a100,area, Ex1.EPS);
 	}
 	@Test
 	/**
