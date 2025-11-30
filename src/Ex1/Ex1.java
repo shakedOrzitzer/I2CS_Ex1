@@ -67,9 +67,26 @@ public class Ex1 {
 		int lx = xx.length;
 		int ly = yy.length;
 		if(xx!=null && yy!=null && lx==ly && lx>1 && lx<4) {
-		/** add you code below
-
-		/////////////////// */
+            if (lx==3&&ly==3){
+                double x1=xx[0],y1=yy[0],x2=xx[1],y2=yy[1],x3=xx[2],y3=yy[2];
+                double denom = (x1 - x2) * (x1 - x3) * (x2 - x3);
+                double A     = (x3 * (y2 - y1) + x2 * (y1 - y3) + x1 * (y3 - y2)) / denom;
+                double B     = (x3*x3 * (y1 - y2) + x2*x2 * (y3 - y1) + x1*x1 * (y2 - y3)) / denom;
+                double C     = (x2 * x3 * (x2 - x3) * y1 + x3 * x1 * (x3 - x1) * y2 + x1 * x2 * (x1 - x2) * y3) / denom;
+                double xv = -B / (2*A);
+                double yv = C - B*B / (4*A);
+                ans = new double[]{C,B,A};}
+            else {
+                if(lx==2&&ly==2){
+                    double x1=xx[0],y1=yy[0],x2=xx[1],y2=yy[1];
+                    double leny= Math.abs(y1-y2);
+                    double lenx= Math.abs(x1-x2);
+                    double m=leny/lenx;
+                    double b=y1-m-x1;
+                    ans = new double[]{b,m};
+                    ans = new double[]{b,m};
+                }
+            }
 		}
 		return ans;
 	}
@@ -146,19 +163,12 @@ public class Ex1 {
 	 */
 	public static double sameValue(double[] p1, double[] p2, double x1, double x2, double eps) {
 		double ans = -1;
-        for(double i=x1;i<=x2;i+=EPS) {
-            if(Math.abs((f(p1,i)-f(p2,i))) <= EPS) {return i;}
+        for(double i=x1;i<=x2;i+=0.00001) {
+            if(Math.abs((f(p1,i)-f(p2,i))) < eps) {return i;}
         }
 		return x1;
 	}
-    public static double sameValue00(double[] p1, double[] p2, double x1, double x2, double eps) {
-        // p(x) = p1(x) − p2(x)
-        double[] minusP2 = mul(p2, new double[]{-1});
-        double[] diff = add(p1, minusP2);
 
-        // now find root of diff(x)
-        return -1;
-    }
 	/**
 	 * Given a polynomial function (p), a range [x1,x2] and an integer with the number (n) of sample points.
 	 * This function computes an approximation of the length of the function between f(x1) and f(x2) 

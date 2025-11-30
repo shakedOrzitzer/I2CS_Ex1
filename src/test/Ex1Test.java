@@ -256,7 +256,8 @@ class Ex1Test {
 }
 	@Test
 	/**
-	 * Test the area f1(x)=0, f2(x)=x;
+	 * Test the
+     * f1(x)=0, f2(x)=x;
 	 */
 	public void testArea2() {
 		double[] po_a = Ex1.ZERO;
@@ -334,5 +335,21 @@ class Ex1Test {
         int n =2;
         double expected = 30.594;
         assertEquals(expected,Ex1.length(p,x1,x2,n),Ex1.EPS);
+    }
+
+    @Test
+    public void testPolyFromPoints() {
+        double[] xx={-1,0,1};
+        double[] yy={1,0,1};
+        double[] expected={0,0,1};
+        assertArrayEquals(expected,Ex1.PolynomFromPoints(xx,yy),Ex1.EPS);
+    }
+
+    @Test
+    public void testPolyFromPoints2() {
+        double[] xx={2,3};
+        double[] yy={8,10};
+        double[] expected={4,2};
+        assertArrayEquals(expected,Ex1.PolynomFromPoints(xx,yy),Ex1.EPS);
     }
 }
