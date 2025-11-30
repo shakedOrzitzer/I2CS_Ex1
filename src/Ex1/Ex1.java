@@ -58,6 +58,7 @@ public class Ex1 {
 	 * This function computes a polynomial representation from a set of 2D points on the polynom.
 	 * The solution is based on: //	http://stackoverflow.com/questions/717762/how-to-calculate-the-vertex-of-a-parabola-given-three-points
 	 * Note: this function only works for a set of points containing up to 3 points, else returns null.
+     * for 1 point, function will return polynome such that f(x)=b
 	 * @param xx
 	 * @param yy
 	 * @return an array of doubles representing the coefficients of the polynom.
@@ -84,17 +85,20 @@ public class Ex1 {
                     double m=leny/lenx;
                     double b=y1-m-x1;
                     ans = new double[]{b,m};
-                    ans = new double[]{b,m};
+                }
+                if(lx==1&&ly==1){
+                    return yy;
                 }
             }
 		}
 		return ans;
 	}
-	/** Two polynomials functions are equal if and only if they have the same values f(x) for n+1 values of x,
+
+    /** Two polynomials functions are equal if and only if they have the same values f(x) for n+1 values of x,
 	 * where n is the max degree (over p1, p2) - up to an epsilon (aka EPS) value.
 	 * @param p1 first polynomial function
 	 * @param p2 second polynomial function
-	 * @return true if p1 represents the same polynomial function as p2.
+	 * @return true if p1 represents the same polynomial function as p2 up to EPS.
 	 */
 	public static boolean equals(double[] p1, double[] p2) {
 		boolean ans = true;
@@ -114,10 +118,6 @@ public class Ex1 {
 	 * @param poly the polynomial function represented as an array of doubles
 	 * @return String representing the polynomial function:
      *
-     * int len=poly.length
-     * for(int i=len;i>=0;i-=1){
-     *      ans+= string(poly[i])+"X^"+string(i)
-     * }
 	 */
 	public static String poly(double[] poly) {
 		String ans = "";
@@ -173,8 +173,7 @@ public class Ex1 {
 	 * Given a polynomial function (p), a range [x1,x2] and an integer with the number (n) of sample points.
 	 * This function computes an approximation of the length of the function between f(x1) and f(x2) 
 	 * using n inner sample points and computing the segment-path between them.
-	 * assuming x1 < x2. 
-	 * This function should be implemented iteratively (none recursive).
+	 * assuming x1 < x2.
 	 * @param poly - the polynomial function
 	 * @param x1 - minimal value of the range
 	 * @param x2 - maximal value of the range
@@ -230,13 +229,14 @@ public class Ex1 {
         }
 		return ans;
 	}
-	/**
+
+    /**
 	 * This function computes the array representation of a polynomial function from a String
 	 * representation. Note:given a polynomial function represented as a double array,
 	 * getPolynomFromString(poly(p)) should return an array equals to p.
 	 * 
 	 * @param p - a String representing polynomial function.
-	 * @return
+	 * @return poly
 	 */
 	public static double[] getPolynomFromString(String p) {
 		double [] ans = ZERO;//  -1.0x^2 +3.0x +2.0, "-1.2x^3 +3.1x^2 +2.0"
@@ -244,33 +244,24 @@ public class Ex1 {
         int len=p2.length;
         int bigPow= getBFromMonom(p2[0]);
         String[] revP2= new String[bigPow+1];
-        for(int i=p2.length-1;i>=0;i--){
-            if(getBFromMonom(p2[i]) ==i){}
-                revP2[i]=p2[i];
-        }
         double[] poly = new double[revP2.length];
         for (int i=revP2.length-1;i>=0;i-=1) {
             if(getBFromMonom(revP2[i])==i){
                 poly[i]=getAFromMonom(revP2[i]);
             }
             int run=p2.length-1;
-            for(int i=0;i<revP2.length;i+=1){
-                if( getBFromMonom(p2[run])==i){
-                    poly[i]=getAFromMonom(p2[run]);
+            for(int j=0;j<revP2.length;j+=1){
+                if( getBFromMonom(p2[run])==j){
+                    poly[j]=getAFromMonom(p2[run]);
                 }
-                else{poly[i]=0}
+                else{poly[j]=0;}
             }
         }
 		return poly;
 	}
 	/**
 	 * This function computes the polynomial function which is the sum of two polynomial functions (p1,p2)
-     * if l2>l1
-     *      replace l1,l2
-     * for (int i=0;i<l2;i++){
-     *      p1[i]+=p2[i]
-     * }
-     *
+     * if one of the polynomes is null, returns the other one
 	 * @param p1 longer
 	 * @param p2 shorter
 	 * @return p2
@@ -305,19 +296,14 @@ public class Ex1 {
         }
 		return compact(res);
 	}
-	/**
+
+    /**
 	 * This function computes the polynomial function which is the multiplication of two polynoms (p1,p2)
-     * p1,p2 compact
-     * double[] res= new double[]
-     * for (int i=0;i<p1.len;i++){
-     *      double[] c= mul(p2,p1[i],i]
-     *      and=add (ans,c)
-     *
-     *     }
-     * }
+     * using help function mul1. which multiplys monom*polynome
+     * and compact function if the bigger pows are 0's.
 	 * @param p1
 	 * @param p2
-	 * @return
+	 * @return p1*p2
 	 */
 	public static double[] mul(double[] p1, double[] p2) {
 		double [] ans = ZERO;//
@@ -332,16 +318,9 @@ public class Ex1 {
 
     }
 	/**
-	 * This function computes the derivative of the p0 polynomial function.
-     * input (poly)
-     * output ans= ZERO
-     * if ( poly != null && poly.length>1)
-     * int len = poly.length
-     * ans= new double [len-1]
-     * for(int i=0;i<ans.length
-     *  ans[i]= poly[i+1] * (i+1)
+	 * This function computes the derivative of the po polynomial function.
 	 * @param po
-	 * @return
+	 * @return derivative of po
 	 */
 	public static double[] derivative (double[] po) {
 		double [] ans = ZERO;
@@ -354,9 +333,9 @@ public class Ex1 {
 		return ans;
 	}
     /**
-     * פונקציית עזר לmul
+     *help function to mul.
      * function gets poly, m= (a*x**b)
-     * returns poly*m
+     * returns poly*monom
      * poly= {1,2,3} m=2*x^3
      *
      * mul (poly,a,b)
@@ -366,7 +345,8 @@ public class Ex1 {
      * for(int i=b;b<res.len;i++)
      *      res[i]=a*poly[i]
      * @param poly
-     * @param b
+     * @param a monom- a*x^b
+     * @param b monom- a*x^b
      * @return
      */
     public static double[] mul1(double[] poly,double a, int b) {
@@ -437,39 +417,5 @@ public class Ex1 {
         }
 
         return parseInt(monom);
-    }
-
-    /**
-     * this function computes the difference of 2 polynomes
-     */
-    public static double[] diff(double[] p1, double[] p2) {
-        if (p1==null)
-            return p2;
-        if (p2==null)
-            return p1;
-        p1=compact(p1);
-        p2=compact(p2);
-        int l1=p1.length;
-        int l2=p2.length;
-        double[]ans;
-        if (l2>l1){
-            ans=new double[l2];
-            for (int i = 0; i <l1 ; i++) {
-                ans[i] = p1[i]-p2[i];
-            }
-            for (int i = l1; i < l2 ; i++) {
-                ans[i]=p2[i];
-            }
-        }
-        else {
-            ans=new double[l1];
-            for (int i = 0; i <l2 ; i++) {
-                ans[i] = p1[i]-p2[i];
-            }
-            for (int i = l2; i < l1 ; i++) {
-                ans[i]=p1[i];
-            }
-        }
-        return ans;
     }
 }
